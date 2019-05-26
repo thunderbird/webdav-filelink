@@ -1,0 +1,42 @@
+{
+  "name": "__MSG_extensionName__",
+  "description": "__MSG_extensionDescription__",
+  "version": "1",
+  "applications": {
+    "gecko": {
+      "id": "dav-cloudfile@darktrojan.net",
+      "strict_min_version": "60.5"
+    }
+  },
+  "background": {
+    "scripts": [
+      "background.js"
+    ]
+  },
+  "cloud_file": {
+    "name": "__MSG_serviceName__",
+    "management_url": "management.html"
+  },
+  "experiment_apis": {
+    "authRequest": {
+      "schema": "api/authRequest.json",
+      "parent": {
+        "scopes": [
+          "addon_parent"
+        ],
+        "paths": [
+          [
+            "authRequest"
+          ]
+        ],
+        "script": "api/authRequest.js"
+      }
+    }
+  },
+  "permissions": [
+    "<all_urls>",
+    "storage"
+  ],
+  "default_locale": "en",
+  "manifest_version": 2
+}

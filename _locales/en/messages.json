@@ -1,0 +1,11 @@
+{
+  "extensionDescription": {
+    "message": "Uploads your large attachments to your WebDAV account instead of sending them by email"
+  },
+  "extensionName": {
+    "message": "FileLink provider for WebDAV"
+  },
+  "serviceName": {
+    "message": "WebDAV"
+  }
+}

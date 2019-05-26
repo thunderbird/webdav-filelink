@@ -1,0 +1,26 @@
+[
+  {
+    "namespace": "authRequest",
+    "functions": [
+      {
+        "name": "getAuthHeader",
+        "type": "function",
+        "async": true,
+        "parameters": [
+          {
+            "name": "url",
+            "type": "string"
+          },
+          {
+            "name": "authenticateHeader",
+            "type": "string"
+          },
+          {
+            "name": "requestMethod",
+            "type": "string"
+          }
+        ]
+      }
+    ]
+  }
+]
