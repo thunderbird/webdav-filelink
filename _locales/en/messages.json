@@ -5,6 +5,18 @@
   "extensionName": {
     "message": "FileLink provider for WebDAV"
   },
+  "privateURLDescription": {
+    "message": "Thunderbird will use this address to connect to your WebDAV server."
+  },
+  "privateURLHeader": {
+    "message": "Private URL:"
+  },
+  "publicURLHeader": {
+    "message": "Public URL:"
+  },
+  "publicURLDescription": {
+    "message": "Thunderbird will use this address in your email messages for your contacts to view."
+  },
   "serviceName": {
     "message": "WebDAV"
   }

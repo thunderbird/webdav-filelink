@@ -4,6 +4,12 @@ let public_url = form.querySelector(`input[name="public_url"]`);
 let button = form.querySelector("button");
 let accountId = new URL(location.href).searchParams.get("accountId");
 
+(() => {
+  for (let element of document.querySelectorAll("[data-message]")) {
+    element.textContent = browser.i18n.getMessage(element.dataset.message);
+  }
+})();
+
 browser.storage.local.get([accountId]).then(accountInfo => {
   if (accountId in accountInfo) {
     if ("private_url" in accountInfo[accountId]) {

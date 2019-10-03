@@ -54,8 +54,7 @@ var authRequest = class extends ExtensionCommon.ExtensionAPI {
             for (let i = 0; i < 16; i++) {
               cnonce += "abcdef0123456789"[Math.floor(Math.random() * 16)];
             }
-            // let nc = 1;
-            // ("00000000" + nc).slice(-8) + ":" +
+
             let HA1 = getHash(`${username}:${realm}:${password}`);
             let HA2 = getHash(`${requestMethod}:${filePath}`);
             let response = getHash(HA1 + ":" + nonce + ":00000001:" + cnonce + ":" + qop + ":" + HA2);

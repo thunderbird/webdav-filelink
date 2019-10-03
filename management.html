@@ -4,20 +4,54 @@
   <meta charset="utf-8"/>
   <title></title>
   <script src="management.js" type="application/javascript" defer=""></script>
+  <style type="text/css">
+    :root {
+      font: message-box;
+      color: #0c0c0d;
+    }
+    body {
+      font-size: 1.1em;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    h1 {
+      font-weight: 600;
+      font-size: 1.25em;
+      margin-top: 0;
+      margin-bottom: 0.5em;
+    }
+    h2 {
+      font-weight: 600;
+      font-size: 1.1em;
+      margin: 0.5em 0;
+    }
+    p {
+      margin: 0.5em 0;
+    }
+    input {
+      width: 100%;
+      box-sizing: border-box;
+    }
+  </style>
 </head>
 <body>
   <form>
+    <h1 data-message="serviceName"></h1>
     <ul>
       <li>
         <label>
-          Private URL:
-          <input type="url" name="private_url" required="true" placeholder="http://dav.example.com/" />
+          <h2 data-message="privateURLHeader"></h2>
+          <p data-message="privateURLDescription"></p>
+          <input type="url" name="private_url" required="true" placeholder="https://dav.example.com/" />
         </label>
       </li>
       <li>
         <label>
-          Public URL:
-          <input type="url" name="public_url" placeholder="http://www.example.com/" />
+          <h2 data-message="publicURLHeader"></h2>
+          <p data-message="publicURLDescription"></p>
+          <input type="url" name="public_url" placeholder="https://www.example.com/" />
         </label>
       </li>
     </ul>
