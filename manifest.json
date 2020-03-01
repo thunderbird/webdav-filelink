@@ -15,6 +15,7 @@
   },
   "cloud_file": {
     "name": "__MSG_serviceName__",
+    "data_format": "File",
     "management_url": "management.html"
   },
   "experiment_apis": {
