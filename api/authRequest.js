@@ -6,6 +6,7 @@ var { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
 var { LoginManagerPrompter } = ChromeUtils.import("resource://gre/modules/LoginManagerPrompter.jsm");
 
 var bundle = Services.strings.createBundle("chrome://global/locale/commonDialogs.properties");
+var brandBundle = Services.strings.createBundle("chrome://branding/locale/brand.properties");
 
 var authRequest = class extends ExtensionCommon.ExtensionAPI {
   getAPI(context) {
@@ -78,12 +79,12 @@ var authRequest = class extends ExtensionCommon.ExtensionAPI {
             return createHeader(login.username, login.password);
           }
 
-          let title = bundle.GetStringFromName("PromptUsernameAndPassword2");
+          let brandFullName = brandBundle.GetStringFromName("brandFullName");
+          let title = bundle.formatStringFromName("PromptUsernameAndPassword3", [brandFullName]);
           let text = bundle.formatStringFromName("EnterUserPasswordFor2", [displayHostPort], 1);
           let usernameInput = {};
           let passwordInput = {};
-          let prompter = new LoginManagerPrompter();
-          prompter.init(Services.ww.activeWindow);
+          let prompter = Services.ww.getNewAuthPrompter(Services.ww.activeWindow);
           if (!prompter.promptUsernameAndPassword(
             title, text, prePath, Ci.nsIAuthPrompt.SAVE_PASSWORD_PERMANENTLY, usernameInput, passwordInput
           )) {
