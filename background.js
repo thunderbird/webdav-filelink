@@ -10,14 +10,51 @@ async function getURLs(accountId) {
 
 browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) => {
   let urls = await getURLs(account.id);
+  let madeDir = false;
   let uploadInfo = {
     id,
     name,
+    foldName: "",
     abortController: new AbortController(),
   };
   uploads.set(id, uploadInfo);
 
-  let url = urls.private_url + encodeURIComponent(name);
+  for (let attempt = 0; attempt < 3; attempt++) {
+    var randomFold = Math.random().toString(36).substr(2, 8);
+    let foldUrl = urls.private_url + randomFold;
+    let headers = {};
+    let fetchInfo = {
+      method: "MKCOL",
+      headers,
+      signal: uploadInfo.abortController.signal,
+    };
+    let response = await fetch(foldUrl, fetchInfo);
+
+    if (response.status == 401) {
+      headers.Authorization = await browser.authRequest.getAuthHeader(
+        foldUrl, response.headers.get("WWW-Authenticate"), "MKCOL"
+      );
+      response = await fetch(foldUrl, fetchInfo);
+    }
+
+    if (response.status > 299 && response.status != 405) { 
+      throw new Error("response was not ok");
+    }
+
+    if (response.status == 201) { 
+      madeDir = true;
+      break;
+    }
+  }
+
+  if (madeDir == false) {
+    throw new Error("Failed to create a folder");
+  }
+
+  uploadInfo.foldName = randomFold;
+  uploads.set(id, uploadInfo);
+
+  let url = urls.private_url + randomFold + "/" + encodeURIComponent(name);
   let headers = {
     "Content-Type": "application/octet-stream",
   };
@@ -42,7 +79,7 @@ browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) =
   }
 
   if (urls.public_url) {
-    return { url: urls.public_url + encodeURIComponent(name) };
+    return { url: urls.public_url + randomFold + "/" + encodeURIComponent(name) };
   }
   return { url };
 });
@@ -61,7 +98,7 @@ browser.cloudFile.onFileDeleted.addListener(async (account, id) => {
   }
 
   let urls = await getURLs(account.id);
-  let url = urls.private_url + encodeURIComponent(uploadInfo.name);
+  let url = urls.private_url + uploadInfo.foldName + "/";
   let headers = {};
   let fetchInfo = {
     headers,
