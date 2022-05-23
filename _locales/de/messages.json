@@ -1,0 +1,23 @@
+{
+  "extensionDescription": {
+    "message": "Lädt Ihre großen E-Mail Anhänge in Ihr WebDAV Konto hoch, anstatt sie per E-Mail zu versenden"
+  },
+  "extensionName": {
+    "message": "FileLink Unterstützung für WebDAV"
+  },
+  "privateURLDescription": {
+    "message": "Thunderbird verwendet diese Adresse um sich mit dem WebDAV Server zu verbinden."
+  },
+  "privateURLHeader": {
+    "message": "Private URL:"
+  },
+  "publicURLHeader": {
+    "message": "Öffentliche URL:"
+  },
+  "publicURLDescription": {
+    "message": "Thunderbird verwendet diese Adresse in den E-Mail Nachrichten."
+  },
+  "serviceName": {
+    "message": "WebDAV"
+  }
+}
