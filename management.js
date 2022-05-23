@@ -27,12 +27,17 @@ button.onclick = async () => {
   }
 
   private_url.disabled = public_url.disabled = button.disabled = true;
+
   let private_url_value = private_url.value;
   if (!private_url_value.endsWith("/")) {
     private_url_value += "/";
     private_url.value = private_url_value;
   }
+
   let public_url_value = public_url.value || private_url_value;
+  if (!public_url_value.endsWith("/")) {
+    public_url_value += "/";
+  }
   public_url.value = public_url_value;
 
   let start = Date.now();
