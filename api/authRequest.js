@@ -2,7 +2,6 @@ Cu.importGlobalProperties(["btoa"]);
 
 var { ExtensionCommon } = ChromeUtils.import("resource://gre/modules/ExtensionCommon.jsm");
 var { ExtensionUtils } = ChromeUtils.import("resource://gre/modules/ExtensionUtils.jsm");
-var { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
 var { LoginManagerPrompter } = ChromeUtils.import("resource://gre/modules/LoginManagerPrompter.jsm");
 
 var bundle = Services.strings.createBundle("chrome://global/locale/commonDialogs.properties");
