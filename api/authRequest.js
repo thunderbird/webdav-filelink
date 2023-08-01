@@ -2,7 +2,6 @@ Cu.importGlobalProperties(["btoa"]);
 
 var { ExtensionCommon } = ChromeUtils.import("resource://gre/modules/ExtensionCommon.jsm");
 var { ExtensionUtils } = ChromeUtils.import("resource://gre/modules/ExtensionUtils.jsm");
-var { Services } = ChromeUtils.import("resource://gre/modules/Services.jsm");
 var { LoginManagerPrompter } = ChromeUtils.import("resource://gre/modules/LoginManagerPrompter.jsm");
 
 var bundle = Services.strings.createBundle("chrome://global/locale/commonDialogs.properties");
@@ -85,9 +84,13 @@ var authRequest = class extends ExtensionCommon.ExtensionAPI {
           let usernameInput = {};
           let passwordInput = {};
           let prompter = Services.ww.getNewAuthPrompter(Services.ww.activeWindow);
-          if (!prompter.promptUsernameAndPassword(
+          let passwordPrompter = prompter.asyncPromptUsernameAndPassword
+            ? prompter.asyncPromptUsernameAndPassword
+            : prompter.promptUsernameAndPassword
+
+          if (!(await passwordPrompter(
             title, text, prePath, Ci.nsIAuthPrompt.SAVE_PASSWORD_PERMANENTLY, usernameInput, passwordInput
-          )) {
+          ))) {
             throw new ExtensionUtils.ExtensionError("Authorization prompt cancelled");
           }
 
