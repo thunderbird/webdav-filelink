@@ -1,18 +1,24 @@
 {
   "name": "__MSG_extensionName__",
   "description": "__MSG_extensionDescription__",
-  "version": "5",
+  "version": "6",
   "applications": {
     "gecko": {
       "id": "dav-cloudfile@darktrojan.net",
-      "strict_min_version": "91.0",
-      "strict_max_version": "102.*"
+      "strict_min_version": "102.0",
+      "strict_max_version": "115.*"
     }
   },
   "background": {
     "scripts": [
       "background.js"
     ]
+  },
+  "icons": {
+    "16": "logo/logo_16.png",
+    "32": "logo/logo_32.png",
+    "64": "logo/logo_64.png",
+    "128": "logo/logo_128.png"
   },
   "cloud_file": {
     "name": "__MSG_serviceName__",
