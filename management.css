@@ -1,57 +1,71 @@
 :root {
     font: message-box;
     color: #0c0c0d;
-  }
-  body {
+}
+
+body {
     font-size: 1.1em;
-  }
-  ul {
+}
+
+ul {
     list-style: none;
     padding: 0;
-  }
-  h1 {
+}
+
+h1 {
     font-weight: 600;
     font-size: 1.25em;
     margin-top: 0;
     margin-bottom: 0.5em;
-  }
-  h2 {
+}
+
+h2 {
     font-weight: 600;
     font-size: 1.1em;
     margin: 0.5em 0;
-  }
-  p {
+}
+
+p {
     margin: 0.5em 0;
-  }
-  input {
+}
+
+input {
     width: 100%;
     box-sizing: border-box;
-  }
-  li {
+}
+
+li {
     padding-top: 1em;
-  }
-  
-  .button-container {
+}
+
+.button-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-  }
-  #notifications {
-    flex-grow: 1; 
+}
+
+#notifications {
+    flex-grow: 1;
     border-radius: 10px;
     background-color: lightgrey;
     text-align: center;
     padding: 2px;
     margin: 0 2em 0 0;
     visibility: hidden;
-  }
-  #notifications[data-status="ok"] {
+}
+
+#notifications[data-status="ok"] {
     border: 1px solid darkgreen;
     color: darkgreen;
     visibility: visible;
-  }
-  #notifications[data-status="fail"] {
+}
+
+#notifications[data-status="fail"] {
     border: 1px solid red;
     color: red;
     visibility: visible;
-  }
+}
+
+.header {
+    float: right;
+}
