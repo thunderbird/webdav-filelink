@@ -19,5 +19,35 @@
   },
   "serviceName": {
     "message": "WebDAV"
+  },
+  "usernameHeader": {
+    "message": "Username:"
+  },
+  "passwordHeader": {
+    "message": "Password:"
+  },
+  "status-not-configured": {
+    "message": "Account is not properly configured"
+  },
+  "status-code-200": {
+    "message": "Connection successful"
+  },
+  "status-code-401": {
+    "message": "Invalid credentials"
+  },
+  "status-code-503": {
+    "message": "Service temporarily unavailable"
+  },
+  "status-connection-error": {
+    "message": "Connection error"
+  },
+  "status-code": {
+    "message": "Could not connect to service (HTTP STATUS $CODE$)",
+    "placeholders": {
+      "code": {
+        "content": "$1"
+      }
+    }
   }
+
 }

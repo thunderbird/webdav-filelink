@@ -1,6 +1,6 @@
 var uploads = new Map();
 
-async function getURLs(accountId) {
+async function getConfiguration(accountId) {
   let accountInfo = await browser.storage.local.get([accountId]);
   if (!accountInfo[accountId] || !("private_url" in accountInfo[accountId])) {
     throw new Error("No URLs found.");
@@ -9,7 +9,7 @@ async function getURLs(accountId) {
 }
 
 browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) => {
-  let urls = await getURLs(account.id);
+  let configuration = await getConfiguration(account.id);
   let uploadInfo = {
     id,
     name,
@@ -17,32 +17,33 @@ browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) =
   };
   uploads.set(id, uploadInfo);
 
-  let url = urls.private_url + encodeURIComponent(name);
+  let url = configuration.private_url + encodeURIComponent(name);
+  
   let headers = {
     "Content-Type": "application/octet-stream",
+    "User-Agent": "Filelink for WebDav v" + manifest.version,
+    "Authorization": `Basic ${btoa(configuration.username + ':' + configuration.password)}`
   };
   let fetchInfo = {
     method: "PUT",
     headers,
     body: data,
     signal: uploadInfo.abortController.signal,
+    credentials: "omit",
   };
   let response = await fetch(url, fetchInfo);
 
   if (response.status == 401) {
-    headers.Authorization = await browser.authRequest.getAuthHeader(
-      url, response.headers.get("WWW-Authenticate"), "PUT"
-    );
-    response = await fetch(url, fetchInfo);
+    throw new Error("Invalid credentials");
   }
 
   delete uploadInfo.abortController;
   if (response.status > 299) {
-    throw new Error("response was not ok");
+    throw new Error("Response was not ok");
   }
 
-  if (urls.public_url) {
-    return { url: urls.public_url + encodeURIComponent(name) };
+  if (configuration.public_url) {
+    return { url: configuration.public_url + encodeURIComponent(name) };
   }
   return { url };
 });
@@ -60,9 +61,12 @@ browser.cloudFile.onFileDeleted.addListener(async (account, id) => {
     return;
   }
 
-  let urls = await getURLs(account.id);
-  let url = urls.private_url + encodeURIComponent(uploadInfo.name);
-  let headers = {};
+  let configuration = await getConfiguration(account.id);
+  let url = configuration.private_url + encodeURIComponent(uploadInfo.name);
+  let headers = {
+    "User-Agent": "Filelink for WebDav v" + manifest.version,
+    "Authorization": `Basic ${btoa(configuration.username + ':' + configuration.password)}`
+  };
   let fetchInfo = {
     headers,
     method: "DELETE",
@@ -70,10 +74,7 @@ browser.cloudFile.onFileDeleted.addListener(async (account, id) => {
   let response = await fetch(url, fetchInfo);
 
   if (response.status == 401) {
-    headers.Authorization = await browser.authRequest.getAuthHeader(
-      url, response.headers.get("WWW-Authenticate"), "DELETE"
-    );
-    response = await fetch(url, fetchInfo);
+    throw new Error("Invalid credentials");
   }
 
   uploads.delete(id);
@@ -85,8 +86,9 @@ browser.cloudFile.onFileDeleted.addListener(async (account, id) => {
 browser.cloudFile.getAllAccounts().then(async (accounts) => {
   let allAccountsInfo = await browser.storage.local.get();
   for (let account of accounts) {
+    let configuration = allAccountsInfo[account.id];
     await browser.cloudFile.updateAccount(account.id, {
-      configured: account.id in allAccountsInfo,
+      configured: configuration && configuration.status == 200,
     });
   }
 });

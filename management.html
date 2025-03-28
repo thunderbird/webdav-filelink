@@ -4,41 +4,13 @@
   <meta charset="utf-8"/>
   <title></title>
   <script src="management.js" type="application/javascript" defer=""></script>
-  <style type="text/css">
-    :root {
-      font: message-box;
-      color: #0c0c0d;
-    }
-    body {
-      font-size: 1.1em;
-    }
-    ul {
-      list-style: none;
-      padding: 0;
-    }
-    h1 {
-      font-weight: 600;
-      font-size: 1.25em;
-      margin-top: 0;
-      margin-bottom: 0.5em;
-    }
-    h2 {
-      font-weight: 600;
-      font-size: 1.1em;
-      margin: 0.5em 0;
-    }
-    p {
-      margin: 0.5em 0;
-    }
-    input {
-      width: 100%;
-      box-sizing: border-box;
-    }
-  </style>
+  <link rel="stylesheet" href="management.css">
 </head>
 <body>
+
+  <h1 data-message="serviceName"></h1>
+
   <form>
-    <h1 data-message="serviceName"></h1>
     <ul>
       <li>
         <label>
@@ -49,13 +21,29 @@
       </li>
       <li>
         <label>
+          <h2 data-message="usernameHeader"></h2>
+          <input type="text" name="username" required="true" />
+        </label>
+      </li>
+      <li>
+        <label>
+          <h2 data-message="passwordHeader"></h2>
+          <input type="password" name="password" required="true" />
+        </label>
+      </li>
+      <li>
+        <label>
           <h2 data-message="publicURLHeader"></h2>
           <p data-message="publicURLDescription"></p>
           <input type="url" name="public_url" placeholder="https://www.example.com/" />
         </label>
       </li>
     </ul>
-    <div style="text-align: right"><button type="button">Save</button></div>
+
+    <div class="button-container">
+      <div id="notifications">OK</div>
+      <button type="button">Save</button>
+    </div>
   </form>
 </body>
 </html>

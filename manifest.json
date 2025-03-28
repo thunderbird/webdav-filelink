@@ -6,7 +6,7 @@
     "gecko": {
       "id": "dav-cloudfile@darktrojan.net",
       "strict_min_version": "128.0",
-      "strict_max_version": "128.*"
+      "strict_max_version": "138.*"
     }
   },
   "background": {
@@ -23,22 +23,6 @@
   "cloud_file": {
     "name": "__MSG_serviceName__",
     "management_url": "management.html"
-  },
-  "experiment_apis": {
-    "authRequest": {
-      "schema": "api/authRequest.json",
-      "parent": {
-        "scopes": [
-          "addon_parent"
-        ],
-        "paths": [
-          [
-            "authRequest"
-          ]
-        ],
-        "script": "api/authRequest.js"
-      }
-    }
   },
   "permissions": [
     "<all_urls>",
