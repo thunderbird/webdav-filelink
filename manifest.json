@@ -1,12 +1,11 @@
 {
   "name": "__MSG_extensionName__",
   "description": "__MSG_extensionDescription__",
-  "version": "7",
+  "version": "8",
   "applications": {
     "gecko": {
       "id": "dav-cloudfile@darktrojan.net",
-      "strict_min_version": "128.0",
-      "strict_max_version": "138.*"
+      "strict_min_version": "128.0"
     }
   },
   "background": {
