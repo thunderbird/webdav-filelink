@@ -83,13 +83,27 @@ browser.cloudFile.onFileDeleted.addListener(async (account, id) => {
   }
 });
 
+
 browser.cloudFile.getAllAccounts().then(async (accounts) => {
   let allAccountsInfo = await browser.storage.local.get();
+  let badConfig = false;
   for (let account of accounts) {
     let configuration = allAccountsInfo[account.id];
+    let status = configuration && configuration.status == 200;
     await browser.cloudFile.updateAccount(account.id, {
       configured: configuration && configuration.status == 200,
     });
+    if (!status) {
+      badConfig = true;
+    }
+  }
+
+  if (badConfig) {
+    browser.notifications.create({
+      type: "basic",
+      title: browser.i18n.getMessage("extensionName"),
+      message: browser.i18n.getMessage("status-not-configured"),
+    })
   }
 });
 
