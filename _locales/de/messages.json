@@ -1,0 +1,52 @@
+{
+    "extensionDescription": {
+      "message": "Lädt Ihre großen Anhänge in Ihr WebDAV-Konto hoch, anstatt sie per E-Mail zu versenden"
+    },
+    "extensionName": {
+      "message": "FileLink-Anbieter für WebDAV"
+    },
+    "privateURLDescription": {
+      "message": "Thunderbird verwendet diese Adresse, um eine Verbindung zu Ihrem WebDAV-Server herzustellen."
+    },
+    "privateURLHeader": {
+      "message": "Private URL:"
+    },
+    "publicURLHeader": {
+      "message": "Öffentliche URL:"
+    },
+    "publicURLDescription": {
+      "message": "Thunderbird verwendet diese Adresse in Ihren E-Mail-Nachrichten, damit Ihre Kontakte sie ansehen können."
+    },
+    "serviceName": {
+      "message": "WebDAV"
+    },
+    "usernameHeader": {
+      "message": "Benutzername:"
+    },
+    "passwordHeader": {
+      "message": "Passwort:"
+    },
+    "status-not-configured": {
+      "message": "Konto ist nicht korrekt konfiguriert"
+    },
+    "status-code-200": {
+      "message": "Verbindung erfolgreich"
+    },
+    "status-code-401": {
+      "message": "Ungültige Anmeldeinformationen"
+    },
+    "status-code-503": {
+      "message": "Dienst vorübergehend nicht verfügbar"
+    },
+    "status-connection-error": {
+      "message": "Verbindungsfehler"
+    },
+    "status-code": {
+      "message": "Verbindungsfehler (HTTP STATUS $CODE$)",
+      "placeholders": {
+        "code": {
+          "content": "$1"
+        }
+      }
+    }
+  }
