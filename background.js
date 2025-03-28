@@ -21,7 +21,7 @@ browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) =
   
   let headers = {
     "Content-Type": "application/octet-stream",
-    "User-Agent": "Filelink for WebDav v" + manifest.version,
+    "User-Agent": "Filelink for WebDav v" + browser.runtime.getManifest().version,
     "Authorization": `Basic ${btoa(configuration.username + ':' + configuration.password)}`
   };
   let fetchInfo = {
@@ -64,7 +64,7 @@ browser.cloudFile.onFileDeleted.addListener(async (account, id) => {
   let configuration = await getConfiguration(account.id);
   let url = configuration.private_url + encodeURIComponent(uploadInfo.name);
   let headers = {
-    "User-Agent": "Filelink for WebDav v" + manifest.version,
+    "User-Agent": "Filelink for WebDav v" + browser.runtime.getManifest().version,
     "Authorization": `Basic ${btoa(configuration.username + ':' + configuration.password)}`
   };
   let fetchInfo = {
