@@ -1,5 +1,12 @@
 var uploads = new Map();
 
+function generateSecureId(length = 12) {
+  const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  const values = new Uint32Array(length);
+  crypto.getRandomValues(values);
+  return Array.from(values).map(v => charset[v % charset.length]).join('');
+}
+
 async function getConfiguration(accountId) {
   let accountInfo = await browser.storage.local.get([accountId]);
   if (!accountInfo[accountId] || !("private_url" in accountInfo[accountId])) {
@@ -10,30 +17,54 @@ async function getConfiguration(accountId) {
 
 browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) => {
   let configuration = await getConfiguration(account.id);
+
+  // 1. Generate a unique folder name for this upload
+  let randomFold = generateSecureId(16);
+  let foldUrl = configuration.private_url + randomFold + "/";
+
   let uploadInfo = {
     id,
     name,
+    foldName: randomFold,
     abortController: new AbortController(),
   };
   uploads.set(id, uploadInfo);
 
-  let url = configuration.private_url + encodeURIComponent(name);
-  
-  let headers = {
-    "Content-Type": "application/octet-stream",
-    "User-Agent": "Filelink for WebDav v" + browser.runtime.getManifest().version,
-    "Authorization": `Basic ${btoa(configuration.username + ':' + configuration.password)}`
-  };
+  let authHeader = `Basic ${btoa(configuration.username + ':' + configuration.password)}`;
+  let userAgent = "Filelink for WebDav v" + browser.runtime.getManifest().version;
+
+  // 2. Create the random subfolder (MKCOL)
+  let mkcolResponse = await fetch(foldUrl, {
+    method: "MKCOL",
+    headers: {
+      "Authorization": authHeader,
+      "User-Agent": userAgent
+    },
+    signal: uploadInfo.abortController.signal
+  });
+
+  // 405 means folder already exists (rare with 16 chars, but safe to ignore)
+  if (mkcolResponse.status > 299 && mkcolResponse.status !== 405) {
+    throw new Error("Failed to create secure subfolder: " + mkcolResponse.status);
+  }
+
+  // 3. Upload the file into that folder (PUT)
+  let fileUrl = foldUrl + encodeURIComponent(name);
   let fetchInfo = {
     method: "PUT",
-    headers,
+    headers: {
+      "Content-Type": "application/octet-stream",
+      "User-Agent": userAgent,
+      "Authorization": authHeader
+    },
     body: data,
     signal: uploadInfo.abortController.signal,
     credentials: "omit",
   };
-  let response = await fetch(url, fetchInfo);
 
-  if (response.status == 401) {
+  let response = await fetch(fileUrl, fetchInfo);
+
+  if (response.status === 401) {
     throw new Error("Invalid credentials");
   }
 
@@ -42,10 +73,11 @@ browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) =
     throw new Error("Response was not ok");
   }
 
+  // 4. Return the public or private URL including the random folder
   if (configuration.public_url) {
-    return { url: configuration.public_url + encodeURIComponent(name) };
+    return { url: configuration.public_url + randomFold + "/" + encodeURIComponent(name) };
   }
-  return { url };
+  return { url: fileUrl };
 });
 
 browser.cloudFile.onFileUploadAbort.addListener((account, id) => {
@@ -57,32 +89,33 @@ browser.cloudFile.onFileUploadAbort.addListener((account, id) => {
 
 browser.cloudFile.onFileDeleted.addListener(async (account, id) => {
   let uploadInfo = uploads.get(id);
-  if (!uploadInfo) {
+  if (!uploadInfo || !uploadInfo.foldName) {
     return;
   }
 
   let configuration = await getConfiguration(account.id);
-  let url = configuration.private_url + encodeURIComponent(uploadInfo.name);
+  // Point the DELETE request to the FOLDER, not the file
+  let url = configuration.private_url + uploadInfo.foldName + "/";
+
   let headers = {
     "User-Agent": "Filelink for WebDav v" + browser.runtime.getManifest().version,
     "Authorization": `Basic ${btoa(configuration.username + ':' + configuration.password)}`
   };
-  let fetchInfo = {
+
+  let response = await fetch(url, {
     headers,
     method: "DELETE",
-  };
-  let response = await fetch(url, fetchInfo);
+  });
 
-  if (response.status == 401) {
+  if (response.status === 401) {
     throw new Error("Invalid credentials");
   }
 
   uploads.delete(id);
   if (response.status > 299) {
-    throw new Error("response was not ok");
+    throw new Error("Response was not ok");
   }
 });
-
 
 browser.cloudFile.getAllAccounts().then(async (accounts) => {
   let allAccountsInfo = await browser.storage.local.get();
