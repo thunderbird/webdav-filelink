@@ -42,10 +42,23 @@ browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) =
     throw new Error("Response was not ok");
   }
 
-  if (configuration.public_url) {
-    return { url: configuration.public_url + encodeURIComponent(name) };
+  let downloadUrl = (configuration.public_url || configuration.private_url) + encodeURIComponent(name);
+  // copyparty includes the filekey in the PUT response's Location header.
+  // Keep the configured public URL; only copy the per-file access key.
+  let location = response.headers.get("Location");
+  if (location) {
+    try {
+      let filekey = new URL(location, url).searchParams.get("k");
+      if (filekey) {
+        let publicUrl = new URL(downloadUrl);
+        publicUrl.searchParams.set("k", filekey);
+        downloadUrl = publicUrl.href;
+      }
+    } catch (error) {
+      // Ignore malformed Location headers from otherwise successful uploads.
+    }
   }
-  return { url };
+  return { url: downloadUrl };
 });
 
 browser.cloudFile.onFileUploadAbort.addListener((account, id) => {

@@ -16,6 +16,25 @@ You need a WebDAV account which is protected by basic authentication, or ip rang
 
 ## How to setup the required WebDAV server
 
+### copyparty with filekeys
+
+For [copyparty](https://github.com/9001/copyparty#filekeys), enable the `fk`
+volume flag and give the upload account write access plus either read (`r`)
+or upget (`G`) access. Give recipients get (`g`) access to allow downloads
+without signing in, while requiring the filekey.
+
+The add-on automatically copies the `k` filekey from the upload response's
+`Location` header into the download link. No additional setting is needed.
+If you configure a different public URL, it must point to the same files and
+preserve the `k` query parameter. Deletion still uses the private URL and the
+configured credentials; the account needs delete (`d`) access for this.
+
+### Tests
+
+Run `node --test tests/background.test.cjs` (Node.js 18 or newer). These tests
+exercise the upload, abort, and delete listeners with mocked Thunderbird APIs
+and HTTP responses.
+
 ### Example of Apache WebDAV with Active Directory Authentication
 ```
 LoadModule      dav_module           modules/mod_dav.so

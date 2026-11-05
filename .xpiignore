@@ -1,2 +1,3 @@
 *.png
 .eslintrc.js
+tests/**
