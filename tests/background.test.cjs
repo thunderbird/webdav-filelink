@@ -3,7 +3,8 @@ const { readFileSync } = require("node:fs");
 const { test } = require("node:test");
 const vm = require("node:vm");
 
-const source = readFileSync(require.resolve("../background.js"), "utf8");
+const source = readFileSync(require.resolve("../request.js"), "utf8") + "\n" +
+  readFileSync(require.resolve("../background.js"), "utf8");
 const account = { id: "account1" };
 const name = "résumé #1?.txt";
 const privateUrl = "https://private.example/upload/";
@@ -59,6 +60,8 @@ test("copies copyparty's filekey while keeping the configured public URL", async
   assert.equal(requests[0].body, "attachment");
   assert.equal(requests[0].credentials, "omit");
   assert.equal(requests[0].headers.Authorization, `Basic ${btoa("uploader:secret")}`);
+  assert.equal(requests[0].headers.PW, undefined);
+  assert.equal(requests[0].redirect, "follow");
 
   await listeners.onFileDeleted(account, 1);
   assert.equal(requests.length, 2);
@@ -66,6 +69,22 @@ test("copies copyparty's filekey while keeping the configured public URL", async
   assert.equal(requests[1].method, "DELETE");
   assert.equal(requests[1].headers.Authorization, requests[0].headers.Authorization);
 });
+
+for (const [authentication, password] of [["copyparty", "secret"], ["copyparty-usernames", "uploader:secret"]]) {
+  test(`${authentication} authenticates PUT and DELETE without forwarding passwords on redirects`, async () => {
+    const { upload, listeners, requests } = setup(new Response(null, {
+      status: 201,
+      headers: { Location: "/upload/file.txt?k=test-key" },
+    }), { authentication });
+    assert.equal((await upload()).url, publicUrl + encodedName + "?k=test-key");
+    await listeners.onFileDeleted(account, 1);
+    assert.deepEqual(requests.map(request => request.method), ["PUT", "DELETE"]);
+    for (const request of requests) {
+      assert.equal(request.headers.PW, password);
+      assert.equal(request.redirect, "error");
+    }
+  });
+}
 
 test("supports relative Location headers and an unset public URL", async () => {
   const { upload } = setup(new Response(null, {

@@ -23,17 +23,27 @@ volume flag and give the upload account write access plus either read (`r`)
 or upget (`G`) access. Give recipients get (`g`) access to allow downloads
 without signing in, while requiring the filekey.
 
+In the account settings, select **copyparty** under **Authentication**, or
+**copyparty with --usernames** if the server uses `--usernames`. This sends
+copyparty's documented `PW` header for the connection check, uploads, and
+deletions, allowing cross-origin requests without changing the server's
+[CORS protections](https://github.com/9001/copyparty#cors). The copyparty modes
+reject redirects to avoid forwarding the password header; use the final server
+URL as the private URL. Existing accounts default to standard Basic authentication.
+
 The add-on automatically copies the `k` filekey from the upload response's
-`Location` header into the download link. No additional setting is needed.
+`Location` header into the download link.
 If you configure a different public URL, it must point to the same files and
 preserve the `k` query parameter. Deletion still uses the private URL and the
-configured credentials; the account needs delete (`d`) access for this.
+configured credentials; copyparty requires read (`r`) and delete (`d`) access
+for this. An upload-only `wG` account can share its uploads but cannot delete
+them through WebDAV without those permissions.
 
 ### Tests
 
-Run `node --test tests/background.test.cjs` (Node.js 18 or newer). These tests
-exercise the upload, abort, and delete listeners with mocked Thunderbird APIs
-and HTTP responses.
+Run `node --test tests/*.test.cjs` (Node.js 18 or newer). These tests
+exercise the upload, abort, and delete listeners, account settings, and
+authentication with mocked Thunderbird APIs and HTTP responses.
 
 ### Example of Apache WebDAV with Active Directory Authentication
 ```

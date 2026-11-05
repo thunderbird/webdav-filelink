@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <title></title>
+  <script src="request.js" type="application/javascript" defer=""></script>
   <script src="management.js" type="application/javascript" defer=""></script>
   <link rel="stylesheet" href="management.css">
 </head>
@@ -14,6 +15,17 @@
 
   <form>
     <ul>
+      <li>
+        <label>
+          <h2 data-message="authenticationHeader"></h2>
+          <select name="authentication">
+            <option value="basic" data-message="authenticationBasic"></option>
+            <option value="copyparty" data-message="authenticationCopyparty"></option>
+            <option value="copyparty-usernames" data-message="authenticationCopypartyUsernames"></option>
+          </select>
+          <p data-message="authenticationDescription"></p>
+        </label>
+      </li>
       <li>
         <label>
           <h2 data-message="privateURLHeader"></h2>

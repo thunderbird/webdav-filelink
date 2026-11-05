@@ -1,3 +1,5 @@
+/* global getRequestOptions */
+
 var uploads = new Map();
 
 async function getConfiguration(accountId) {
@@ -19,12 +21,13 @@ browser.cloudFile.onFileUpload.addListener(async (account, { id, name, data }) =
 
   let url = configuration.private_url + encodeURIComponent(name);
   
+  let requestOptions = getRequestOptions(configuration);
   let headers = {
+    ...requestOptions.headers,
     "Content-Type": "application/octet-stream",
-    "User-Agent": "Filelink for WebDav v" + browser.runtime.getManifest().version,
-    "Authorization": `Basic ${btoa(configuration.username + ':' + configuration.password)}`
   };
   let fetchInfo = {
+    ...requestOptions,
     method: "PUT",
     headers,
     body: data,
@@ -76,12 +79,8 @@ browser.cloudFile.onFileDeleted.addListener(async (account, id) => {
 
   let configuration = await getConfiguration(account.id);
   let url = configuration.private_url + encodeURIComponent(uploadInfo.name);
-  let headers = {
-    "User-Agent": "Filelink for WebDav v" + browser.runtime.getManifest().version,
-    "Authorization": `Basic ${btoa(configuration.username + ':' + configuration.password)}`
-  };
   let fetchInfo = {
-    headers,
+    ...getRequestOptions(configuration),
     method: "DELETE",
   };
   let response = await fetch(url, fetchInfo);

@@ -1,8 +1,11 @@
+/* global getRequestOptions */
+
 let form = document.querySelector("form");
 let private_url = form.querySelector(`input[name="private_url"]`);
 let public_url = form.querySelector(`input[name="public_url"]`);
 let username = form.querySelector(`input[name="username"]`);
 let password = form.querySelector(`input[name="password"]`);
+let authentication = form.querySelector(`select[name="authentication"]`);
 
 let button = form.querySelector("button");
 let accountId = new URL(location.href).searchParams.get("accountId");
@@ -40,6 +43,7 @@ function getHumanReadableStatusCode(code) {
 
 browser.storage.local.get([accountId]).then(accountInfo => {
   if (accountId in accountInfo) {
+    authentication.value = accountInfo[accountId].authentication || "basic";
     if ("private_url" in accountInfo[accountId]) {
       private_url.value = accountInfo[accountId].private_url;
     }
@@ -85,12 +89,12 @@ button.onclick = async () => {
   public_url.value = public_url_value;
 
   // Validate.
-  let headers = {
-    "User-Agent": "Filelink for WebDav v" + browser.runtime.getManifest().version,
-    "Authorization": `Basic ${btoa(username.value + ':' + password.value)}`
-  };
   let fetchInfo = {
-    headers,
+    ...getRequestOptions({
+      username: username.value,
+      password: password.value,
+      authentication: authentication.value,
+    }),
     method: "OPTIONS",
   };
   let response = await fetch(private_url_value, fetchInfo).catch(e => {
@@ -110,6 +114,7 @@ button.onclick = async () => {
       public_url: public_url_value,
       password: password.value,
       username: username.value,
+      authentication: authentication.value,
       status: response.status
     },
   });

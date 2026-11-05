@@ -1,4 +1,19 @@
 {
+    "authenticationHeader": {
+      "message": "Authentifizierung:"
+    },
+    "authenticationBasic": {
+      "message": "Basic (Standard-WebDAV)"
+    },
+    "authenticationCopyparty": {
+      "message": "copyparty"
+    },
+    "authenticationCopypartyUsernames": {
+      "message": "copyparty mit --usernames"
+    },
+    "authenticationDescription": {
+      "message": "Wählen Sie für copyparty den passenden Authentifizierungsmodus, um Uploads aus Thunderbird zu erlauben. Verwenden Sie die Option --usernames nur, wenn Ihr Server sowohl Benutzername als auch Passwort verlangt."
+    },
     "extensionDescription": {
       "message": "Lädt Ihre großen Anhänge in Ihr WebDAV-Konto hoch, anstatt sie per E-Mail zu versenden"
     },
