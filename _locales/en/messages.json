@@ -8,11 +8,8 @@
   "authenticationCopyparty": {
     "message": "copyparty"
   },
-  "authenticationCopypartyUsernames": {
-    "message": "copyparty with --usernames"
-  },
   "authenticationDescription": {
-    "message": "For copyparty, choose its authentication mode to allow uploads from Thunderbird. Use the --usernames option only if your server requires both username and password."
+    "message": "For copyparty, the server's authentication mode is detected automatically when you save."
   },
   "extensionDescription": {
     "message": "Uploads your large attachments to your WebDAV account instead of sending them by email"

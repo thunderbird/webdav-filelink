@@ -23,9 +23,12 @@ volume flag and give the upload account write access plus either read (`r`)
 or upget (`G`) access. Give recipients get (`g`) access to allow downloads
 without signing in, while requiring the filekey.
 
-In the account settings, select **copyparty** under **Authentication**, or
-**copyparty with --usernames** if the server uses `--usernames`. This sends
-copyparty's documented `PW` header for the connection check, uploads, and
+In the account settings, select **copyparty** under **Authentication** and save.
+The add-on detects password-only or `--usernames` authentication using read-only
+JSON listing requests and stores the working mode for subsequent uploads.
+The connection check verifies authentication and write permission, including
+for upload-only accounts. This sends copyparty's documented `PW` header for the
+connection check, uploads, and
 deletions, allowing cross-origin requests without changing the server's
 [CORS protections](https://github.com/9001/copyparty#cors). The copyparty modes
 reject redirects to avoid forwarding the password header; use the final server

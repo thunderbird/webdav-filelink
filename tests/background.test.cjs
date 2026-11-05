@@ -70,17 +70,17 @@ test("copies copyparty's filekey while keeping the configured public URL", async
   assert.equal(requests[1].headers.Authorization, requests[0].headers.Authorization);
 });
 
-for (const [authentication, password] of [["copyparty", "secret"], ["copyparty-usernames", "uploader:secret"]]) {
-  test(`${authentication} authenticates PUT and DELETE without forwarding passwords on redirects`, async () => {
+for (const usernames of [false, true]) {
+  test(`copyparty (usernames=${usernames}) authenticates PUT and DELETE without forwarding passwords on redirects`, async () => {
     const { upload, listeners, requests } = setup(new Response(null, {
       status: 201,
       headers: { Location: "/upload/file.txt?k=test-key" },
-    }), { authentication });
+    }), { authentication: "copyparty", copyparty_usernames: usernames });
     assert.equal((await upload()).url, publicUrl + encodedName + "?k=test-key");
     await listeners.onFileDeleted(account, 1);
     assert.deepEqual(requests.map(request => request.method), ["PUT", "DELETE"]);
     for (const request of requests) {
-      assert.equal(request.headers.PW, password);
+      assert.equal(request.headers.PW, usernames ? "uploader:secret" : "secret");
       assert.equal(request.redirect, "error");
     }
   });

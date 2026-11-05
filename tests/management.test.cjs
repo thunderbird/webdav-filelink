@@ -53,20 +53,25 @@ for (const authentication of [undefined, "copyparty", "copyparty-usernames"]) {
       setTimeout: resolve => resolve(),
       fetch: async (url, options) => {
         requests.push({ url, ...options });
+        if (options.method == "GET") {
+          const authenticated = options.headers.PW == (authentication == "copyparty-usernames" ? "uploader:secret" : "secret");
+          return Response.json({ acct: authenticated ? "uploader" : "*", perms: authenticated ? ["write"] : [] });
+        }
         return new Response(null, { status: 200 });
       },
     });
     await new Promise(resolve => setImmediate(resolve));
-    assert.equal(inputs.authentication.value, authentication || "basic");
+    assert.equal(inputs.authentication.value, authentication ? "copyparty" : "basic");
     await button.onclick();
     assert.equal(requests.length, 1);
-    assert.equal(requests[0].method, "OPTIONS");
-    assert.equal(requests[0].url, configuration.private_url);
+    assert.equal(requests[0].method, authentication ? "GET" : "OPTIONS");
+    assert.equal(requests[0].url, configuration.private_url + (authentication ? "?ls=" : ""));
     assert.equal(requests[0].headers.Authorization, `Basic ${btoa("uploader:secret")}`);
-    assert.equal(requests[0].headers.PW, authentication == "copyparty" ? "secret" :
-      authentication == "copyparty-usernames" ? "uploader:secret" : undefined);
+    assert.equal(requests[0].headers.PW, authentication == "copyparty-usernames" ? "uploader:secret" :
+      authentication ? "secret" : undefined);
     assert.equal(requests[0].redirect, authentication ? "error" : "follow");
-    assert.equal(saved.authentication, authentication || "basic");
+    assert.equal(saved.authentication, authentication ? "copyparty" : "basic");
+    assert.equal(saved.copyparty_usernames, authentication == "copyparty-usernames");
     assert.equal(saved.password, configuration.password);
     assert.equal(updated.configured, true);
   });
