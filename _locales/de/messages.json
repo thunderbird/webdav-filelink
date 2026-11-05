@@ -1,4 +1,16 @@
 {
+    "authenticationHeader": {
+      "message": "Authentifizierung:"
+    },
+    "authenticationBasic": {
+      "message": "Basic (Standard-WebDAV)"
+    },
+    "authenticationCopyparty": {
+      "message": "copyparty"
+    },
+    "authenticationDescription": {
+      "message": "Für copyparty wird der Authentifizierungsmodus des Servers beim Speichern automatisch erkannt."
+    },
     "extensionDescription": {
       "message": "Lädt Ihre großen Anhänge in Ihr WebDAV-Konto hoch, anstatt sie per E-Mail zu versenden"
     },

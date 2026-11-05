@@ -16,6 +16,38 @@ You need a WebDAV account which is protected by basic authentication, or ip rang
 
 ## How to setup the required WebDAV server
 
+### copyparty with filekeys
+
+For [copyparty](https://github.com/9001/copyparty#filekeys), enable the `fk`
+volume flag and give the upload account write access plus either read (`r`)
+or upget (`G`) access. Give recipients get (`g`) access to allow downloads
+without signing in, while requiring the filekey.
+
+In the account settings, select **copyparty** under **Authentication** and save.
+The add-on detects password-only or `--usernames` authentication using read-only
+JSON listing requests and stores the working mode for subsequent uploads.
+The connection check verifies authentication and write permission, including
+for upload-only accounts. This sends copyparty's documented `PW` header for the
+connection check, uploads, and
+deletions, allowing cross-origin requests without changing the server's
+[CORS protections](https://github.com/9001/copyparty#cors). The copyparty modes
+reject redirects to avoid forwarding the password header; use the final server
+URL as the private URL. Existing accounts default to standard Basic authentication.
+
+The add-on automatically copies the `k` filekey from the upload response's
+`Location` header into the download link.
+If you configure a different public URL, it must point to the same files and
+preserve the `k` query parameter. Deletion still uses the private URL and the
+configured credentials; copyparty requires read (`r`) and delete (`d`) access
+for this. An upload-only `wG` account can share its uploads but cannot delete
+them through WebDAV without those permissions.
+
+### Tests
+
+Run `node --test tests/*.test.cjs` (Node.js 18 or newer). These tests
+exercise the upload, abort, and delete listeners, account settings, and
+authentication with mocked Thunderbird APIs and HTTP responses.
+
 ### Example of Apache WebDAV with Active Directory Authentication
 ```
 LoadModule      dav_module           modules/mod_dav.so

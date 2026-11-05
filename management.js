@@ -1,11 +1,21 @@
+/* global checkConnection */
+
 let form = document.querySelector("form");
 let private_url = form.querySelector(`input[name="private_url"]`);
 let public_url = form.querySelector(`input[name="public_url"]`);
 let username = form.querySelector(`input[name="username"]`);
 let password = form.querySelector(`input[name="password"]`);
+let authentication = form.querySelector(`select[name="authentication"]`);
+let copypartyUsernames = false;
 
 let button = form.querySelector("button");
 let accountId = new URL(location.href).searchParams.get("accountId");
+
+function updateAuthenticationDescription() {
+  document.getElementById("authentication-description").hidden = authentication.value != "copyparty";
+}
+
+authentication.onchange = updateAuthenticationDescription;
 
 function setNotification(status, text) {
   const notifications = document.getElementById("notifications");
@@ -40,6 +50,10 @@ function getHumanReadableStatusCode(code) {
 
 browser.storage.local.get([accountId]).then(accountInfo => {
   if (accountId in accountInfo) {
+    copypartyUsernames = accountInfo[accountId].copyparty_usernames === true ||
+      accountInfo[accountId].authentication == "copyparty-usernames";
+    authentication.value = accountInfo[accountId].authentication == "copyparty-usernames" ?
+      "copyparty" : accountInfo[accountId].authentication || "basic";
     if ("private_url" in accountInfo[accountId]) {
       private_url.value = accountInfo[accountId].private_url;
     }
@@ -59,6 +73,7 @@ browser.storage.local.get([accountId]).then(accountInfo => {
       }
     }
   }
+  updateAuthenticationDescription();
 });
 
 // Check status.
@@ -85,15 +100,15 @@ button.onclick = async () => {
   public_url.value = public_url_value;
 
   // Validate.
-  let headers = {
-    "User-Agent": "Filelink for WebDav v" + browser.runtime.getManifest().version,
-    "Authorization": `Basic ${btoa(username.value + ':' + password.value)}`
+  let configuration = {
+    private_url: private_url_value,
+    public_url: public_url_value,
+    username: username.value,
+    password: password.value,
+    authentication: authentication.value,
+    copyparty_usernames: copypartyUsernames,
   };
-  let fetchInfo = {
-    headers,
-    method: "OPTIONS",
-  };
-  let response = await fetch(private_url_value, fetchInfo).catch(e => {
+  let response = await checkConnection(configuration).catch(e => {
     console.info(e);
     return {
       ok: false,
@@ -103,13 +118,14 @@ button.onclick = async () => {
 
   await browser.cloudFile.updateAccount(accountId, { configured: response.ok });
   setNotification(response.ok, getHumanReadableStatusCode(response.status));
+  if (response.ok && configuration.authentication == "copyparty") {
+    copypartyUsernames = response.copyparty_usernames;
+  }
 
   await browser.storage.local.set({
     [accountId]: {
-      private_url: private_url_value,
-      public_url: public_url_value,
-      password: password.value,
-      username: username.value,
+      ...configuration,
+      copyparty_usernames: copypartyUsernames,
       status: response.status
     },
   });
