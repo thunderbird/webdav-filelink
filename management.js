@@ -11,6 +11,12 @@ let copypartyUsernames = false;
 let button = form.querySelector("button");
 let accountId = new URL(location.href).searchParams.get("accountId");
 
+function updateAuthenticationDescription() {
+  document.getElementById("authentication-description").hidden = authentication.value != "copyparty";
+}
+
+authentication.onchange = updateAuthenticationDescription;
+
 function setNotification(status, text) {
   const notifications = document.getElementById("notifications");
   notifications.textContent = text;
@@ -67,6 +73,7 @@ browser.storage.local.get([accountId]).then(accountInfo => {
       }
     }
   }
+  updateAuthenticationDescription();
 });
 
 // Check status.

@@ -14,6 +14,7 @@ for (const authentication of [undefined, "copyparty", "copyparty-usernames"]) {
     }
     const button = {};
     const notifications = { dataset: {} };
+    const authenticationDescription = { hidden: true };
     const form = {
       checkValidity: () => true,
       querySelector: selector => selector == "button" ? button :
@@ -33,7 +34,7 @@ for (const authentication of [undefined, "copyparty", "copyparty-usernames"]) {
       document: {
         querySelector: () => form,
         querySelectorAll: () => [],
-        getElementById: () => notifications,
+        getElementById: id => id == "authentication-description" ? authenticationDescription : notifications,
       },
       location: { href: "https://extension.example/management.html?accountId=account1" },
       browser: {
